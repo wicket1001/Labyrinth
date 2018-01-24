@@ -1,3 +1,6 @@
+/**
+ * A Arduino file to control the I2C Arduino.
+ */
 #include <Wire.h>
 
 #include <FastLED.h>
@@ -42,6 +45,9 @@ char double_str2[13];
 unsigned char width = 12;
 unsigned char prec = 5;
 
+/**
+ * Sets up the different modules.
+ */
 void setup() {
   Serial.begin(9600);
   setupFastLED();
@@ -51,14 +57,26 @@ void setup() {
   setup10dof();
 }
 
+/**
+ * The main loop with the call of the main programm.
+ */
 void loop() {
   mainProg();
 }
 
+/**
+ * Compares two char array for equality.
+ * 
+ * @param str1 The first char array.
+ * @param str2 The second char array.
+ */
 boolean equals(char* str1, char* str2) {
     return strncmp(str1, str2, strlen(str2)) == 0;
 }
 
+/**
+ * The main programm to responde to the serial getters and setters.
+ */
 void mainProg() {
   memset(&serIn, 0, sizeof(serIn));
   memset(&serOut, 0, sizeof(serOut));
@@ -131,37 +149,66 @@ void mainProg() {
     write(serOut);
 }
 
-void read(char* buff) {
-  int index = 0;
-    while(Serial.available()) {
-        buff[index] = Serial.read();
-        index ++;
-        delay(10);
-    }
-}
-
+/**
+ * Puts the  output on the Serial connection.
+ * 
+ * @param buff A char array to write to the Serial connection.
+ */
 void write(char* buff) {
   Serial.println(buff);
 }
 
+/**
+ * Reads from the Serial connection to the buffer.
+ * 
+ * @param buff The char array buffer to write to.
+ */
+void read(char* buff) {
+  int index = 0;
+  while (Serial.available()) {
+    buff[index] = Serial.read();
+    index ++;
+    delay(10);
+  }
+}
+
+/**
+ * Sets up the FastLED library.
+ */
 void setupFastLED() {
   FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
 }
 
+/**
+ * Displays a HSV value on the RGB-LED.
+ * 
+ * @param color A color value in HSV.
+ */
 void displayColor(uint16_t color) {
   leds[0] = CHSV(color, 255, 255);
   FastLED.show();
 }
 
+/**
+ * Sets up the Servos for the thermosensor and the ejection system.
+ */
 void setupServos() {
   thermoServo.attach(3);
   ejectionServo.attach(2);
 }
 
+/**
+ * Sets the speed of the ejection servo.
+ * 
+ * @param The percent of speed from 0 - 100.
+ */
 void setSpeed(int percent) {
   ejectionServo.write(map(percent, 0, 100, 0, 180));
 }
 
+/**
+ * Sets up the APDS (color sensor).
+ */
 void setupAPDS() {
   if ( !apds.init() ) {
     Serial.println("Something went wrong during APDS-9960 init!");
@@ -171,6 +218,12 @@ void setupAPDS() {
   }
 }
 
+/**
+ * Stores the values from the APDS sensor to the array.
+ * 
+ * @param The array to store the value to.
+ * @return If everything worked (1) or if an error occured (0).
+ */
 uint8_t getColors(uint16_t *arr) {
     uint16_t ambient_light = 0;
     uint16_t red_light = 0;
@@ -192,11 +245,19 @@ uint8_t getColors(uint16_t *arr) {
     return 1;
 }
 
+/**
+ * Sets up the temperature sensor.
+ */
 void setupTemp() {
   therm.begin();
   therm.setUnit(TEMP_C);
 }
 
+/**
+ * Measures the temperature on the temperature sensor and return the pointer of the struct.
+ * 
+ * @return The struct of the temperatures measured, where object is the one far away and ambient the temperature directly on the sensor.
+ */
 temp_t *getTemperature() {
     temp_t temp;
     if (therm.read()) {
@@ -211,6 +272,9 @@ temp_t *getTemperature() {
     }
 }
 
+/**
+ * Sets up the MPU9250 (10dof).
+ */
 void setup10dof() {
   if (_10dof.begin() != INV_SUCCESS)
   {
@@ -231,6 +295,12 @@ void setup10dof() {
               10);*/
 }
 
+/**
+ * Gets the values measured by the Accelerometer.
+ * 
+ * @param The array to store the values to.
+ * @return An error code, where 0 an error occured.
+ */
 uint8_t getAccel(float *arr) {
     uint8_t err = _10dof.updateAccel();
     arr[0] = _10dof.calcAccel(_10dof.ax);
@@ -239,6 +309,12 @@ uint8_t getAccel(float *arr) {
     return err;
 }
 
+/**
+ * Gets the values measured by the Gyroscop.
+ * 
+ * @param The array to store the values to.
+ * @return An error code, where 0 an error occured.
+ */
 uint8_t getGyro(float *arr) {
     uint8_t err = _10dof.updateGyro();
     arr[0] = _10dof.calcGyro(_10dof.gx);
@@ -247,6 +323,12 @@ uint8_t getGyro(float *arr) {
     return err;
 }
 
+/**
+ * Gets the values measured by the Magnetometer.
+ * 
+ * @param The array to store the values to.
+ * @return An error code, where 0 an error occured.
+ */
 uint8_t getMag(float *arr) {
     uint8_t err = _10dof.updateCompass();
     arr[0] = _10dof.calcMag(_10dof.mx);

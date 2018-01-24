@@ -122,7 +122,7 @@ uint8_t HC_SR04::lb(uint8_t value) {
 /**
  * A self written pulseIn function.
  *
- * @param pin
+ * @param pin 
  * @param state
  * @return
  */

@@ -1,3 +1,7 @@
+/**
+ * @author Harald Moritz
+ * The main file for the HC_SR04s.
+ */
 #include "HC_SR04.h"
 
 HC_SR04 us;
@@ -12,14 +16,26 @@ char double_str3[13];
 unsigned char width = 12;
 unsigned char prec = 5;
 
+/**
+ * Sets up the Serial connection.
+ */
 void setup() {
   Serial.begin(9600);
 }
 
+/**
+ * Compares two char array for equality.
+ * 
+ * @param str1 The first char array.
+ * @param str2 The second char array.
+ */
 boolean equals(char* str1, char* str2) {
   return strncmp(str1, str2, strlen(str2)) == 0;
 }
 
+/**
+ * The main loop to responde to the serial getters.
+ */
 void loop() {
   memset(&serIn, 0, sizeof(serIn));
   memset(&distances, 0, sizeof(distances));
@@ -42,10 +58,20 @@ void loop() {
     write(serOut);
 }
 
+/**
+ * Puts the  output on the Serial connection.
+ * 
+ * @param buff A char array to write to the Serial connection.
+ */
 void write(char* buff) {
   Serial.println(buff);
 }
 
+/**
+ * Reads from the Serial connection to the buffer.
+ * 
+ * @param buff The char array buffer to write to.
+ */
 void read(char* buff) {
   int index = 0;
   while (Serial.available()) {
