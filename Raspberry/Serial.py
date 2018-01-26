@@ -25,7 +25,7 @@ def getPorts():
 
     print(arduinos)
 
-getPorts()
+#getPorts()
 
 def simple():
     s = serial.Serial('/dev/tty1', 9600)  # Namen ggf. anpassen
@@ -40,3 +40,4 @@ def simple():
     except KeyboardInterrupt:
         s.close()
 
+simple()

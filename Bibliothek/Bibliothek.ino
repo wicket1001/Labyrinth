@@ -150,6 +150,9 @@ void mainProg() {
         sprintf(serOut, "<null");
     }
     write(serOut);
+    // 5 .. 1024
+    // 3,7 .. x
+    // x = 1024 / 5 * 3,7
 }
 
 /**
