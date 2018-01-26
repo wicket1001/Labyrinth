@@ -1,10 +1,6 @@
 import serial
 import time
 
-#s = serial.Serial('/dev/ttyAMA0', 9600)  # Namen ggf. anpassen
-#s.open()
-#time.sleep(5)  # der Arduino resettet nach einer Seriellen Verbindung, daher muss kurz gewartet werden
-
 def getPorts():
     arduinos = []
     import serial.tools.list_ports_linux as listPorts
@@ -30,12 +26,17 @@ def getPorts():
     print(arduinos)
 
 getPorts()
-'''
-s.write(">setColor:1")
-try:
-    while True:
-        response = s.readline()
-        print(response)
-except KeyboardInterrupt:
-    s.close()
-'''
+
+def simple():
+    s = serial.Serial('/dev/tty1', 9600)  # Namen ggf. anpassen
+    s.open()
+    time.sleep(5)  # der Arduino resettet nach einer Seriellen Verbindung, daher muss kurz gewartet werden
+
+    s.write(">setColor:1")
+    try:
+        while True:
+            response = s.readline()
+            print(response)
+    except KeyboardInterrupt:
+        s.close()
+
