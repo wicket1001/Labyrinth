@@ -5,9 +5,9 @@
 
 #include <FastLED.h>
 #include <Servo.h>
-#include <SparkFun_APDS9960.h>
+//#include <SparkFun_APDS9960.h>
 #include <SparkFunMLX90614.h>
-#include <SparkFunMPU9250-DMP.h>
+//#include <SparkFunMPU9250-DMP.h>
 
 // SERIAL
 char serIn[100];
@@ -25,11 +25,12 @@ Servo ejectionServo;
 
 // SENSORS
 // APDS
-SparkFun_APDS9960 apds = SparkFun_APDS9960();
-uint16_t colors[4];
+//SparkFun_APDS9960 apds = SparkFun_APDS9960();
+//uint16_t colors[4];
 
 // Temp
 IRTherm therm;
+char dstr[13];
 typedef struct {
     double object;
     double ambient;
@@ -37,8 +38,9 @@ typedef struct {
 temp_t *t;
 
 // 10Dof
+/*
 MPU9250_DMP _10dof;
-float arr[3];
+float arr[3];*/
 char double_str0[13];
 char double_str1[13];
 char double_str2[13];
@@ -54,7 +56,7 @@ void setup() {
   setupServos();
   //setupAPDS();
   setupTemp();
-  setup10dof();
+  //setup10dof();
 }
 
 /**
@@ -80,19 +82,20 @@ boolean equals(char* str1, char* str2) {
 void mainProg() {
   memset(&serIn, 0, sizeof(serIn));
   memset(&serOut, 0, sizeof(serOut));
-  memset(&double_str0, 0, sizeof(double_str0));
-  memset(&double_str1, 0, sizeof(double_str1));
-  memset(&double_str2, 0, sizeof(double_str2));
+  //memset(&double_str0, 0, sizeof(double_str0));
+  //memset(&double_str1, 0, sizeof(double_str1));
+  //memset(&double_str2, 0, sizeof(double_str2));
   while (!Serial.available()) { }
   read(serIn);
   write(serIn);
   if (equals(serIn, ">getTemp")) {
+    Serial.println("Hey");
         if (t = getTemperature()) {
-            sprintf(serOut, "<temp:%s", dtostrf(t->object, width, prec, double_str0));
+            sprintf(serOut, "<temp:%s", dtostrf(t->object, width, prec, dstr));
         } else {
             sprintf(serOut, "<temp:null");
         }
-    } else if (equals(serIn,  ">getAccel")) {
+    } /*else if (equals(serIn,  ">getAccel")) {
         if (getAccel(arr)) {
             sprintf(serOut, "<accel:%s,%s,%s",
                     dtostrf(arr[0], width, prec, double_str0),
@@ -128,7 +131,7 @@ void mainProg() {
         } else {
             sprintf(serOut, "<colors:null");
         }
-    } else if (equals(serIn, ">setColor:")) {
+    } */else if (equals(serIn, ">setColor:")) {
         int num = 0;
         sscanf(serIn, ">setColor:%i", &num);
         displayColor(num);
@@ -209,6 +212,7 @@ void setSpeed(int percent) {
 /**
  * Sets up the APDS (color sensor).
  */
+ /*
 void setupAPDS() {
   if ( !apds.init() ) {
     Serial.println("Something went wrong during APDS-9960 init!");
@@ -217,13 +221,14 @@ void setupAPDS() {
     Serial.println("Something went wrong during light sensor init!");
   }
 }
-
+*/
 /**
  * Stores the values from the APDS sensor to the array.
  * 
  * @param The array to store the value to.
  * @return If everything worked (1) or if an error occured (0).
  */
+/*
 uint8_t getColors(uint16_t *arr) {
     uint16_t ambient_light = 0;
     uint16_t red_light = 0;
@@ -244,7 +249,7 @@ uint8_t getColors(uint16_t *arr) {
 
     return 1;
 }
-
+*/
 /**
  * Sets up the temperature sensor.
  */
@@ -260,6 +265,7 @@ void setupTemp() {
  */
 temp_t *getTemperature() {
     temp_t temp;
+    Serial.println("Hey");
     if (therm.read()) {
         temp.object = therm.object();
         temp.ambient = therm.ambient();
@@ -275,6 +281,7 @@ temp_t *getTemperature() {
 /**
  * Sets up the MPU9250 (10dof).
  */
+ /*
 void setup10dof() {
   if (_10dof.begin() != INV_SUCCESS)
   {
@@ -292,8 +299,8 @@ void setup10dof() {
 
  /* _10dof.dmpBegin(DMP_FEATURE_GYRO_CAL |
               DMP_FEATURE_SEND_CAL_GYRO,
-              10);*/
-}
+              10);/* */
+//}
 
 /**
  * Gets the values measured by the Accelerometer.
@@ -301,20 +308,22 @@ void setup10dof() {
  * @param The array to store the values to.
  * @return An error code, where 0 an error occured.
  */
-uint8_t getAccel(float *arr) {
+
+/*uint8_t getAccel(float *arr) {
     uint8_t err = _10dof.updateAccel();
     arr[0] = _10dof.calcAccel(_10dof.ax);
     arr[1] = _10dof.calcAccel(_10dof.ay);
     arr[2] = _10dof.calcAccel(_10dof.az);
     return err;
 }
-
+*/
 /**
  * Gets the values measured by the Gyroscop.
  * 
  * @param The array to store the values to.
  * @return An error code, where 0 an error occured.
  */
+/*
 uint8_t getGyro(float *arr) {
     uint8_t err = _10dof.updateGyro();
     arr[0] = _10dof.calcGyro(_10dof.gx);
@@ -322,13 +331,14 @@ uint8_t getGyro(float *arr) {
     arr[2] = _10dof.calcGyro(_10dof.gz);
     return err;
 }
-
+*/
 /**
  * Gets the values measured by the Magnetometer.
  * 
  * @param The array to store the values to.
  * @return An error code, where 0 an error occured.
  */
+ /*
 uint8_t getMag(float *arr) {
     uint8_t err = _10dof.updateCompass();
     arr[0] = _10dof.calcMag(_10dof.mx);
@@ -336,4 +346,4 @@ uint8_t getMag(float *arr) {
     arr[2] = _10dof.calcMag(_10dof.mz);
     return err;
 }
-
+*/
