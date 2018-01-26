@@ -42,7 +42,10 @@ class Motor:
             for pin in motor:
                 GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
 
+        print(self.enables)
         for pin in self.enables:
+            print(pin)
+            print(type(pin))
             GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
 
         hertz = 50

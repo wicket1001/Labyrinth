@@ -2,7 +2,7 @@
 # coding=utf-8
 
 from searchArduinos import Arduinos
-#from ActorControl import *
+from ActorControl import *
 from Navigation import Map
 import os
 
@@ -18,8 +18,8 @@ def motorTest():
     actorControl = ActorControl()
     motorControl = actorControl.getMotor()
 
-    motorControl = Motor()
-    motorControl.set(1)
+#    motorControl = Motor()
+#    motorControl.set(1)
     while True:
         motorControl.play()
 
@@ -94,10 +94,10 @@ def solveMaze(map, startCoordinates, correct, dy, goalCoordinates = None):
 def mapTest():
     # TODO rotate that longest distance is in front
 
-    file = "/home/user/Schreibtisch/python_Projects/Mazerobot/map1.txt"
+    file = "./map1.txt"
     correct1 = Map(file)
 
-    file = "/home/user/Schreibtisch/python_Projects/Mazerobot/map2.txt"
+    file = "./map2.txt"
     correct2 = Map(file)
 
     map1 = Map()
@@ -141,8 +141,8 @@ def mapTest():
 
 dx = -10
 
-#motorTest()
+motorTest()
 #arduinoConnectionTest()
-mapTest()
+#mapTest()
 
 

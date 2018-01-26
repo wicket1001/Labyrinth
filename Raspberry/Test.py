@@ -25,18 +25,32 @@ def getPorts():
 
     print(arduinos)
 
-getPorts()
+#getPorts()
 
 def simple():
-    s = serial.Serial('/dev/tty1', 9600)  # Namen ggf. anpassen
-    s.open()
-    time.sleep(5)  # der Arduino resettet nach einer Seriellen Verbindung, daher muss kurz gewartet werden
+    import serial.tools as listPorts
+    s = serial.Serial('/dev/ttyS0', 9600)
+    print(s)
+    if s.isOpen() == False:
+        s.open()
+    time.sleep(5)
+    print("Es")
+
+#    if p[2] != 'n/a':
+#                found = False
+#                ser = serial.Serial(p[0])
+#                time.sleep(2)
 
     s.write(">setColor:1")
+    print("Write")
     try:
         while True:
+            userinput = raw_input("Write: ")
+            s.write(userinput)
             response = s.readline()
             print(response)
     except KeyboardInterrupt:
         s.close()
 
+#getPorts()
+simple()
