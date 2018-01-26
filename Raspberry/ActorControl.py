@@ -54,8 +54,8 @@ class Motor:
         self.enables[1] = GPIO.PWM(self.enables[1], hertz)
 
     def set(self, direction, sleeps=-1, speed=100):
-        for motor in self.motors:
-            GPIO.output(motor, self.direction[direction])
+        for i in range(len(self.motors)):
+            GPIO.output(self.motors[i], self.direction[direction[i]])
 
         for pin in self.enables:
             pin.start(speed)
@@ -65,7 +65,7 @@ class Motor:
             self.stop()
 
     def stop(self):
-        self.set(1, speed=0)
+        self.set((1, 1), speed=0)
 
     def play(self):
         print("Config [direction=0/1], [time], [speed=0-100], []")
@@ -85,11 +85,11 @@ class Motor:
                 inputs[i] = int(inputs[i])
 
             if len(inputs) == 1:
-                self.set(inputs[0])
+                self.set((inputs[0], inputs[0]))
             elif len(inputs) == 2:
-                self.set(inputs[0], inputs[1])
+                self.set((inputs[0], inputs[0]), inputs[1])
             elif len(inputs) == 3:
-                self.set(inputs[0], inputs[1], inputs[2])
+                self.set((inputs[0], inputs[0]), inputs[1], inputs[2])
 
 
 class Button:
