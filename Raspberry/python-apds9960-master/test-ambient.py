@@ -12,11 +12,11 @@ apds = APDS9960(bus)
 def intH(channel):
     print("INTERRUPT")
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(7, GPIO.IN)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(4, GPIO.IN)
 try:
     # Interrupt-Event hinzufuegen, steigende Flanke
-    GPIO.add_event_detect(7, GPIO.FALLING, callback = intH)
+    GPIO.add_event_detect(4, GPIO.FALLING, callback = intH)
 
     print("Light Sensor Test")
     print("=================")
