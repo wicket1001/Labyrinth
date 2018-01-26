@@ -77,6 +77,11 @@ class Arduinos:
                     print name + " arduino did not respond the correct value for " + field
                     return [0, 0, 0]
 
+    def write(self, text, index="i2c"):
+        name = self.names[index]
+        arduino = self.arduinos[name]
+        arduino.write(text)
+
     def inWaiting(self, key):
         if self.exists(key):
             return self.arduinos[key].inWaiting()
