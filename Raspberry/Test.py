@@ -28,32 +28,32 @@ def getPorts():
 #getPorts()
 
 def simple():
-    import serial.tools as listPorts
-    s = serial.Serial('/dev/ttyS0', 9600)
+    #import serial.tools as listPorts
+    # p = listPorts.comports()
+    #print(p)
+    s = serial.Serial('/dev/ttyAMA0', 9600)
     print(s)
     if s.isOpen() == False:
         s.open()
     time.sleep(5)
-    print("Es")
+    print("Established")
 
 #    if p[2] != 'n/a':
 #                found = False
 #                ser = serial.Serial(p[0])
 #                time.sleep(2)
 
-    s.write(">setColor:1")
-    print("Write")
+    #s.write(">setColor:1\n")
+    #respone = s.readline()
+    #print(respone)
     try:
         while True:
             userinput = raw_input("Write: ")
             s.write(userinput)
             response = s.readline()
-            print(response)
-    except KeyboardInterrupt:
+            print("Respone: ", response)
+    except:
         s.close()
 
-<<<<<<< HEAD:Raspberry/Serial.py
-=======
-#getPorts()
->>>>>>> 3f725725381712246a3fe376c15de571b564da04:Raspberry/Test.py
+
 simple()
