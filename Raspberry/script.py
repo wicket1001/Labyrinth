@@ -16,6 +16,7 @@ put ./Mazerobot/Raspy.py ./script.py
 
 def motorTest():
     actorControl = ActorControl()
+    global motorControl
     motorControl = actorControl.getMotor()
 
     while True:
@@ -40,7 +41,7 @@ def arduinoConnectionTest():
 
 #def drivePath
 
-def solveMaze(map, startCoordinates, correct, dy, goalCoordinates = None):
+def solveMaze(map, startCoordinates, rot, correct, dx, dy, goalCoordinates = None):
     currentCoordinates = startCoordinates
     cost = 0
     goalField = None
@@ -64,12 +65,14 @@ def solveMaze(map, startCoordinates, correct, dy, goalCoordinates = None):
         if shortestPath is None:
             break
         currentField = shortestPath[len(shortestPath) - 1]
-        # TODO MEASURE FIELD <
         currentCoordinates = currentField.getCoordinates()
+        # TODO MEASURE FIELD <
+        #print currentCoordinates[0]
         correctCoordinates = (currentCoordinates[0] + dx, currentCoordinates[1] + dy)
         correctField = correct.getField(correctCoordinates[0], correctCoordinates[1])
         # TODO END >
         correctWalls = [True] * 4
+        #print correctField
         for i in range(4):
             correctWalls[i] = correctField.isWall(i)
         map.setField(currentCoordinates[0], currentCoordinates[1], correctWalls)
@@ -79,15 +82,73 @@ def solveMaze(map, startCoordinates, correct, dy, goalCoordinates = None):
         cost += len(shortestPath) - 1
         print(cost)
 
-        print(map.drawPath(shortestPath))
+        #print(map.drawPath(shortestPath))
+        for i in range(len(shortestPath) - 1): # field in shortestPath:
+            #print (field)
+            #print ([field])
+            s = shortestPath[i].getCoordinates()
+            e = shortestPath[i + 1].getCoordinates()
+            getRotationDifference(s[0], s[1], rot, e[0], e[1])
+        print "\n"
     print(cost)
     if goalField is None:
         goalField = map.getField(startCoordinates[0], startCoordinates[1])
     raw_input("Fin: ")
     wayToGoal = map.getPath(currentField, goalField)
-    print(map.drawPath(wayToGoal))
+    for i in range(len(wayToGoal) - 1):  # field in shortestPath:
+        # print (field)
+        # print ([field])
+        s = shortestPath[i].getCoordinates()
+        e = shortestPath[i + 1].getCoordinates()
+        getRotationDifference(s[0], s[1], rot, e[0], e[1])
+    print wayToGoal
 
     return cost
+
+def rotate(direction):
+    global motorControl
+    if direction > 0: # links
+        for i in range(abs(direction)):
+            motorControl.set([0, 1], 0.9, 50)
+    elif direction < 0:
+        for i in range(abs(direction)):
+            motorControl.set([1, 0], 0.9, 50)
+
+
+def drive(direction):
+    global motorControl
+    if direction == 1:
+        motorControl.set([1, 1], 0.7, 100)
+    elif direction == -1:
+        motorControl.set([0, 0], 0.7, 100)
+
+
+def getRotationDifference(sx, sy, rot, ex, ey):
+    print(sx, sy, rot, ex, ey)
+    dx = sx - ex
+    dy = sy - ey
+    if rot % 2 == 0 : # y veränderung -> 0
+        if dx == 0:
+            if dy < 0:
+                rotate(2)
+        else: # dx verändert
+            if dx > 0:
+                rotate(-1)
+            else: # dx < 0
+                rotate(1)
+    else:  # x veränderung -> 0
+        if dy == 0:
+            if dx < 0:
+                rotate(2)
+        else:
+            if dy > 0:
+                rotate(-1)
+            else:
+                rotate(1)
+
+    drot = 0
+    print drot
+    rotate(drot)
 
 def mapTest():
     # TODO rotate that longest distance is in front
@@ -114,15 +175,19 @@ def mapTest():
     goalField = map1.getField(goalCoordinates[0], goalCoordinates[1])
 
     cost = 0
-    cost += solveMaze(map1, startCoordinates, correct1, -7, goalCoordinates)
+    cost += solveMaze(map1, startCoordinates, rot, correct1, -1, -7, goalCoordinates)
     # TODO FAHRE NACH OBEN
+
+    global motorControl
+    rotate(-1)
+    drive(5)
 
     map2 = Map()
     startWalls = [True] * 4
     rot = 2
     startWalls[rot] = False
     map2.setField(startCoordinates[0], startCoordinates[1], startWalls)
-    cost += solveMaze(map2, startCoordinates, correct2, -6)
+    cost += solveMaze(map2, startCoordinates, rot, correct2, -10, -6)
     print(cost)
 
 '''
@@ -136,11 +201,9 @@ def mapTest():
         print(map.drawPath(path))
 '''
 
-
-dx = -10
-
-motorTest()
+motorControl = None
+#motorTest()
 #arduinoConnectionTest()
-#mapTest()
+mapTest()
 
 
