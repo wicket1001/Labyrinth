@@ -39,7 +39,9 @@ HC_SR04::HC_SR04() {
  *
  * @param distances A double array to store the distances.
  */
+ /*
 boolean HC_SR04::getDistances(double distances[]) {
+  Serial.println("Hi");
     uint8_t length = sizeof(distances) / sizeof(distances[0]);
     int raw[length];
     getRaw(raw);
@@ -47,6 +49,14 @@ boolean HC_SR04::getDistances(double distances[]) {
         distances[i] = raw[i] * 0.01716;
     }
     return true;
+}
+*/
+boolean HC_SR04::getDistances(double distances[]) {
+  distances[0] = measureOne(6, 2);
+  distances[1] = measureOne(6, 3);
+  distances[2] = measureOne(7, 4);
+  distances[3] = measureOne(7, 5);
+  return true;
 }
 
 /**
@@ -74,6 +84,7 @@ void HC_SR04::getRaw(int raw[]) {
 
     pulses[index] = millis() + timeout; // Saves the timeout time.
     index ++;
+    Serial.println("Hello");
     while (millis() < pulses[0]) { // Store everything until the timeout.
         if (1 != PORTD) { // If something changes.
             Serial.print("Something changed: ");
@@ -96,6 +107,7 @@ void HC_SR04::getRaw(int raw[]) {
         if (values[i - 1] < values[i]) { // If an input trigger got activated.
             uint8_t pin = lb(values[i] - values[i - 1]) - 2; // Get the pin of the next pulse.
             raw[pin] = pulses[i] - pulses[0]; // Write the time difference in the right raw position.
+            Serial.println(raw[pin]);
         }
     }
 }
@@ -126,7 +138,8 @@ uint8_t HC_SR04::lb(uint8_t value) {
  * @param state
  * @return
  */
-unsigned long HC_SR04::pulseInA(uint8_t pin, uint8_t state) {
+unsigned long HC_SR04::pulseInSingle(uint8_t pin, uint8_t state) {
+  Serial.println("Start");
 
     unsigned long pulseWidth = 0;
     unsigned long loopCount = 0;
@@ -135,6 +148,7 @@ unsigned long HC_SR04::pulseInA(uint8_t pin, uint8_t state) {
     // While the pin is *not* in the target state we make sure the timeout hasn't been reached.
     while ((digitalRead(pin)) != state) {
         if (loopCount++ == loopMax) {
+          Serial.println("Max");
             return 0;
         }
     }
@@ -147,8 +161,33 @@ unsigned long HC_SR04::pulseInA(uint8_t pin, uint8_t state) {
         pulseWidth++;
     }
 
+Serial.println("Width: ");
+    Serial.println(pulseWidth);
+
     // Return the pulse time in microsecond!
     //Serial.print("pulseWidth: ");
     //Serial.println(pulseWidth);
     return pulseWidth * 4.0; // Calculated the pulseWidth++ loop to be about 2.36uS in length.
 }
+
+double HC_SR04::measureOne(uint8_t trigger, uint8_t echo) {
+  delay(20);
+    digitalWrite(trigger, LOW);
+    delay(5); // milliseconds
+    digitalWrite(trigger, HIGH);
+    delay(10);
+    digitalWrite(trigger, LOW);
+    long dauer = pulseIn(echo, HIGH);
+    //Serial.print("PulseIn: ");
+    //Serial.println(dauer);
+    double entfernung = dauer * 0.01716; // ÷58.2
+    if (entfernung >= 500 || entfernung <= 0) {
+        //Serial.println("Kein Messwert");
+        return -1.0;
+    } else {
+        //Serial.print(entfernung);
+        //Serial.println(" cm");
+        return entfernung;
+    }
+}
+

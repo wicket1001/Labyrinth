@@ -18,8 +18,6 @@ def motorTest():
     actorControl = ActorControl()
     motorControl = actorControl.getMotor()
 
-#    motorControl = Motor()
-#    motorControl.set(1)
     while True:
         motorControl.play()
 

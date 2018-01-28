@@ -8,11 +8,11 @@ public:
     HC_SR04();
     boolean getDistances(double distances[]);
     void getRaw(int raw[]);
-    void measureOne(uint8_t trigger, uint8_t echo);
+    double measureOne(uint8_t trigger, uint8_t echo);
+    unsigned long pulseInSingle(uint8_t pin, uint8_t state);
 private:
     int timeout = 2000;
     uint8_t lb(uint8_t value);
-    unsigned long pulseInA(uint8_t pin, uint8_t state);
 };
 
 #endif

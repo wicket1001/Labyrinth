@@ -39,11 +39,13 @@ boolean equals(char* str1, char* str2) {
 void loop() {
   memset(&serIn, 0, sizeof(serIn));
   memset(&distances, 0, sizeof(distances));
-  while (Serial.available()) { }
+  while (! Serial.available()) { }
   read(serIn);
+  write(serIn);
+  //Serial.println("Init");
   if (equals(serIn,  ">getDistances")) {
     if (us.getDistances(distances)) {
-      sprintf(serOut, "<distances:%s,%s,%s",
+      sprintf(serOut, "<distances:%s,%s,%s,%s",
               dtostrf(distances[0], width, prec, double_str0),
               dtostrf(distances[1], width, prec, double_str1),
               dtostrf(distances[2], width, prec, double_str2),
@@ -52,6 +54,8 @@ void loop() {
     } else {
       sprintf(serOut, "<distances:null");
     }
+  } else if (equals(serIn, ">getFront")) {
+    sprintf(serOut, "<front:%s", dtostrf(us.measureOne(6, 2), width, prec, double_str0));
   } else {
     sprintf(serOut, "<null");
   }

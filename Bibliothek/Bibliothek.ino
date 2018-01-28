@@ -87,9 +87,8 @@ void mainProg() {
   //memset(&double_str2, 0, sizeof(double_str2));
   while (!Serial.available()) { }
   read(serIn);
-  write(serIn);
+  // write(serIn);
   if (equals(serIn, ">getTemp")) {
-    Serial.println("Hey");
         if (t = getTemperature()) {
             sprintf(serOut, "<temp:%s", dtostrf(t->object, width, prec, dstr));
         } else {
@@ -199,8 +198,8 @@ void displayColor(uint16_t color) {
  * Sets up the Servos for the thermosensor and the ejection system.
  */
 void setupServos() {
-  thermoServo.attach(3);
-  ejectionServo.attach(2);
+  //thermoServo.attach(3);
+  //ejectionServo.attach(2);
 }
 
 /**
@@ -268,15 +267,13 @@ void setupTemp() {
  */
 temp_t *getTemperature() {
     temp_t temp;
-    Serial.println("Hey");
     if (therm.read()) {
         temp.object = therm.object();
         temp.ambient = therm.ambient();
-        Serial.println(temp.object);
         //Serial.println(temp.ambient);
         return &temp;
     } else {
-      Serial.println("Not working");
+      write("Not working");
         return NULL;
     }
 }
