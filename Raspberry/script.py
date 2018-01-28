@@ -16,11 +16,12 @@ put ./Mazerobot/Raspy.py ./script.py
 
 def motorTest():
     actorControl = ActorControl()
+    print(actorControl)
     global motorControl
     motorControl = actorControl.getMotor()
 
-    while True:
-        motorControl.play()
+    #while True:
+    #    motorControl.play()
 
 def arduinoConnectionTest():
     names = {'i2c': 'sensor', 'us': 'ultrasonic'}
@@ -76,7 +77,7 @@ def solveMaze(map, startCoordinates, rot, correct, dx, dy, goalCoordinates = Non
         for i in range(4):
             correctWalls[i] = correctField.isWall(i)
         map.setField(currentCoordinates[0], currentCoordinates[1], correctWalls)
-        raw_input("Next: ")
+   #     raw_input("Next: ")
 
         os.system("clear")
         cost += len(shortestPath) - 1
@@ -93,7 +94,7 @@ def solveMaze(map, startCoordinates, rot, correct, dx, dy, goalCoordinates = Non
     print(cost)
     if goalField is None:
         goalField = map.getField(startCoordinates[0], startCoordinates[1])
-    raw_input("Fin: ")
+    #raw_input("Fin: ")
     wayToGoal = map.getPath(currentField, goalField)
     for i in range(len(wayToGoal) - 1):  # field in shortestPath:
         # print (field)
@@ -202,8 +203,8 @@ def mapTest():
 '''
 
 motorControl = None
-#motorTest()
+motorTest()
 #arduinoConnectionTest()
 mapTest()
-
+#motorTest()
 

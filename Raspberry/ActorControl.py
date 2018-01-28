@@ -4,6 +4,7 @@ import time
 
 class ActorControl:
     def __init__(self):
+	print("Setted")
         GPIO.setmode(GPIO.BCM)
 
         self.motor = Motor()
