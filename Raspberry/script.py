@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # coding=utf-8
 
+import random
+
 from searchArduinos import Arduinos
 from ActorControl import *
 from Navigation import Map
@@ -30,17 +32,6 @@ def arduinoConnectionTest():
         input = raw_input("Direct Serial")
         arduinos.write(input, 'us')
 
-    '''
-    names = {'i2c': 'sensor', 'us': 'ultrasonic'}
-    arduinos = Arduinos(names)
-    arduinos.checkArduinoExistence(names)
-
-    temp = arduinos.getValues('Temp')
-    distances = arduinos.getValues('Distances', 'us')
-    '''
-
-#def drivePath
-
 def solveMaze(map, startCoordinates, rot, correct, dx, dy, goalCoordinates = None):
     currentCoordinates = startCoordinates
     cost = 0
@@ -61,18 +52,15 @@ def solveMaze(map, startCoordinates, rot, correct, dx, dy, goalCoordinates = Non
         for unknownField in unknownFields:
             coords = unknownField.getCoordinates()
             map.removeField(coords[0], coords[1])
-        # TODO DRIVE TO GOAL
         if shortestPath is None:
             break
         currentField = shortestPath[len(shortestPath) - 1]
         currentCoordinates = currentField.getCoordinates()
         # TODO MEASURE FIELD <
-        #print currentCoordinates[0]
         correctCoordinates = (currentCoordinates[0] + dx, currentCoordinates[1] + dy)
         correctField = correct.getField(correctCoordinates[0], correctCoordinates[1])
         # TODO END >
         correctWalls = [True] * 4
-        #print correctField
         for i in range(4):
             correctWalls[i] = correctField.isWall(i)
         map.setField(currentCoordinates[0], currentCoordinates[1], correctWalls)
@@ -80,24 +68,16 @@ def solveMaze(map, startCoordinates, rot, correct, dx, dy, goalCoordinates = Non
 
         os.system("clear")
         cost += len(shortestPath) - 1
-        print(cost)
 
-        #print(map.drawPath(shortestPath))
-        for i in range(len(shortestPath) - 1): # field in shortestPath:
-            #print (field)
-            #print ([field])
+        for i in range(len(shortestPath) - 1):
             s = shortestPath[i].getCoordinates()
             e = shortestPath[i + 1].getCoordinates()
             getRotationDifference(s[0], s[1], rot, e[0], e[1])
-        print "\n"
-    print(cost)
     if goalField is None:
         goalField = map.getField(startCoordinates[0], startCoordinates[1])
     raw_input("Fin: ")
     wayToGoal = map.getPath(currentField, goalField)
     for i in range(len(wayToGoal) - 1):  # field in shortestPath:
-        # print (field)
-        # print ([field])
         s = shortestPath[i].getCoordinates()
         e = shortestPath[i + 1].getCoordinates()
         getRotationDifference(s[0], s[1], rot, e[0], e[1])
@@ -107,7 +87,7 @@ def solveMaze(map, startCoordinates, rot, correct, dx, dy, goalCoordinates = Non
 
 def rotate(direction):
     global motorControl
-    if direction > 0: # links
+    if direction > 0:
         for i in range(abs(direction)):
             motorControl.set([0, 1], 0.9, 50)
     elif direction < 0:
@@ -146,11 +126,13 @@ def getRotationDifference(sx, sy, rot, ex, ey):
             else:
                 rotate(1)
 
+
     drot = 0
     print drot
     rotate(drot)
+    random.random()
 
-def mapTest():
+def main():
     # TODO rotate that longest distance is in front
 
     file = "./map1.txt"
@@ -176,7 +158,6 @@ def mapTest():
 
     cost = 0
     cost += solveMaze(map1, startCoordinates, rot, correct1, -1, -7, goalCoordinates)
-    # TODO FAHRE NACH OBEN
 
     global motorControl
     rotate(-1)
@@ -190,20 +171,9 @@ def mapTest():
     cost += solveMaze(map2, startCoordinates, rot, correct2, -10, -6)
     print(cost)
 
-'''
-    map = Map(file)
-    print(map)
-
-    path = map.getPath(map.getField(1, 1), map.getField(2, 2))
-    if path is None:
-        print("No valid Path found!")
-    else:
-        print(map.drawPath(path))
-'''
-
 motorControl = None
 #motorTest()
 #arduinoConnectionTest()
-mapTest()
+main()
 
 
